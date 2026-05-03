@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking & Pricelist — Kisah Abadi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #fdf6f0; --deep: #1a0a0f; --wine: #7a1a2e;
+      --wine-dark: #5c1220; --rose: #c4748a; --gold: #c8a96e;
+      --muted: #8a7a72; --white: #ffffff; --bg: #fef8f5;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--deep); font-family:'Jost',sans-serif; font-weight:300; min-height:100vh; }
+
+    /* HEADER */
+    header {
+      position:relative; height:220px; overflow:hidden;
+      display:flex; align-items:flex-end; padding:0 24px 32px;
+    }
+    header::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 100%);
+    }
+    header::after {
+      content:''; position:absolute; inset:0;
+      background:url('foto2.jpg') center/cover no-repeat;
+      opacity:0.15; mix-blend-mode:luminosity;
+    }
+    .header-content { position:relative; z-index:2; }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:0.65rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--gold); text-decoration:none; margin-bottom:14px;
+    }
+    header h1 {
+      font-family:'Cormorant Garamond',serif; font-style:italic;
+      font-size:clamp(1.9rem,6vw,2.8rem); color:var(--white); line-height:1; margin-bottom:6px;
+    }
+    header p { font-size:0.65rem; letter-spacing:0.18em; color:rgba(255,255,255,0.42); text-transform:uppercase; }
+
+    /* FORM */
+    .form-section { max-width:600px; margin:0 auto; padding:44px 22px 80px; }
+    .form-intro { margin-bottom:36px; }
+    .form-intro-title { font-family:'Cormorant Garamond',serif; font-size:1.45rem; color:var(--wine); margin-bottom:8px; }
+    .form-intro p { font-size:0.82rem; line-height:1.85; color:var(--muted); }
+
+    .form-group { margin-bottom:28px; position:relative; }
+    .form-group label {
+      display:block; font-size:0.6rem; letter-spacing:0.28em;
+      text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+    }
+    .form-group label span { color:var(--rose); margin-left:2px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; background:transparent; border:none;
+      border-bottom:1px solid rgba(122,26,46,0.22); padding:11px 0;
+      font-family:'Jost',sans-serif; font-size:0.95rem; font-weight:300;
+      color:var(--deep); outline:none; transition:border-color 0.3s;
+      border-radius:0; -webkit-appearance:none; appearance:none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-bottom-color:var(--wine); }
+    .form-group input::placeholder, .form-group textarea::placeholder { color:rgba(138,122,114,0.42); font-size:0.87rem; }
+    .form-group textarea { resize:none; height:60px; }
+    .form-group select { cursor:pointer; color:var(--deep); }
+    .form-group select option { color:var(--deep); background:var(--bg); }
+    .form-line {
+      position:absolute; bottom:0; left:0; width:0; height:1px;
+      background:var(--wine); transition:width 0.4s ease;
+    }
+    .form-group input:focus ~ .form-line,
+    .form-group select:focus ~ .form-line,
+    .form-group textarea:focus ~ .form-line { width:100%; }
+
+    /* Radio */
+    .radio-label { font-size:0.6rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; display:block; }
+    .radio-group { display:flex; gap:0; }
+    .radio-option { flex:1; position:relative; }
+    .radio-option input[type="radio"] { position:absolute; opacity:0; width:0; height:0; }
+    .radio-option label {
+      display:flex; align-items:center; justify-content:center; gap:5px;
+      padding:12px 4px; border:1px solid rgba(122,26,46,0.18);
+      font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase;
+      color:var(--muted); cursor:pointer; transition:all 0.25s;
+      font-weight:300; margin-bottom:0;
+    }
+    .radio-option:not(:last-child) label { border-right:none; }
+    .radio-option input:checked + label { background:var(--wine); border-color:var(--wine); color:var(--white); }
+    .radio-option label:active { background:rgba(122,26,46,0.06); }
+
+    /* Checkbox */
+    .agreement { display:flex; align-items:flex-start; gap:12px; margin:6px 0 0; }
+    .agreement input[type="checkbox"] {
+      appearance: none; -webkit-appearance: none;
+      width: 20px; height: 20px; min-width: 20px; margin-top: 2px;
+      border: 1.5px solid rgba(122,26,46,0.35); border-radius: 4px;
+      background: var(--white); cursor: pointer; flex-shrink: 0;
+      position: relative; transition: all 0.2s ease;
+    }
+    .agreement input[type="checkbox"]:checked {
+      background: var(--wine); border-color: var(--wine);
+    }
+    .agreement input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute; top: 3px; left: 6px;
+      width: 5px; height: 9px;
+      border: 2px solid var(--white); border-top: none; border-left: none;
+      transform: rotate(45deg);
+    }
+    .agreement-text { font-size:0.76rem; line-height:1.65; color:var(--muted); }
+
+    /* Submit */
+    .submit-area { margin-top:36px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .submit-btn {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      padding:17px 0; background:var(--wine); color:var(--white); border:none;
+      font-family:'Jost',sans-serif; font-size:0.73rem; letter-spacing:0.25em;
+      text-transform:uppercase; cursor:pointer; transition:background 0.3s;
+      border-radius:4px; width:100%;
+      box-shadow:0 4px 18px rgba(122,26,46,0.28);
+    }
+    .submit-btn:active { background:var(--wine-dark); }
+    .submit-note { font-size:0.63rem; color:var(--muted); letter-spacing:0.08em; text-align:center; }
+
+    /* ── LOADING OVERLAY ── */
+    #loadingOverlay {
+      position:fixed; inset:0;
+      background:rgba(254,248,245,0.97); backdrop-filter:blur(10px);
+      z-index:5000; display:none;
+      flex-direction:column; align-items:center; justify-content:center; gap:18px;
+    }
+    #loadingOverlay.show { display:flex; }
+    .loading-spinner {
+      width:52px; height:52px;
+      border:2px solid rgba(122,26,46,0.14);
+      border-top-color:var(--wine); border-radius:50%;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.3rem; color:var(--wine); }
+    
+    /* checkmark SVG */
+    .check-wrap { display:none; align-items:center; justify-content:center; }
+    .check-wrap.show { display:flex; }
+    .check-wrap svg { width:56px; height:56px; }
+    .check-circle { fill:none; stroke:var(--wine); stroke-width:2; stroke-dasharray:160; stroke-dashoffset:160; }
+    .check-path { fill:none; stroke:var(--wine); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:40; stroke-dashoffset:40; }
+    .check-circle.animate { animation:drawCircle 0.5s ease forwards; }
+    .check-path.animate { animation:drawCheck 0.4s ease 0.4s forwards; }
+    @keyframes drawCircle { to { stroke-dashoffset:0; } }
+    @keyframes drawCheck { to { stroke-dashoffset:0; } }
+
+    /* ── PRICELIST PANEL ── */
+    #pricelistPanel {
+      position:fixed; inset:0; background:var(--bg); z-index:4000;
+      display:none; flex-direction:column; overflow:hidden;
+      -webkit-overflow-scrolling:touch;
+    }
+    #pricelistPanel.show { display:flex; }
+
+    .pl-header {
+      background:var(--wine); padding:16px 18px;
+      display:flex; align-items:center; gap:12px; flex-shrink:0;
+    }
+    .pl-header h2 {
+      font-family:'Cormorant Garamond',serif; font-style:italic;
+      font-size:1.3rem; color:var(--white); flex:1;
+    }
+    .pl-close-btn {
+      background:rgba(255,255,255,0.18); border:none; color:var(--white);
+      width:32px; height:32px; border-radius:50%; cursor:pointer;
+      font-size:1rem; display:flex; align-items:center; justify-content:center;
+    }
+
+    .pl-countdown {
+      background:rgba(122,26,46,0.07); padding:10px 18px;
+      text-align:center; flex-shrink:0;
+      border-bottom:1px solid rgba(122,26,46,0.1);
+    }
+    .pl-countdown p { font-size:0.7rem; color:var(--muted); }
+    .countdown-num { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:var(--wine); }
+
+    /* PDF wrap — scrollable */
+    .pl-pdf-wrap {
+      flex:1; overflow-y:auto; overflow-x:hidden;
+      padding:14px; display:flex; flex-direction:column;
+      align-items:center; gap:12px;
+      -webkit-overflow-scrolling:touch;
+    }
+    #pdfContainer canvas {
+      max-width:100%; display:block; border-radius:4px;
+      box-shadow:0 6px 32px rgba(0,0,0,0.12);
+      margin-bottom:10px;
+    }
+    .pdf-nav {
+      display:flex; align-items:center; justify-content:center;
+      gap:14px; padding:10px 18px; flex-shrink:0;
+      border-top:1px solid rgba(122,26,46,0.08);
+    }
+    .pdf-nav-btn {
+      background:var(--wine); border:none; color:var(--white);
+      width:34px; height:34px; border-radius:50%; cursor:pointer;
+      font-size:1rem; display:flex; align-items:center; justify-content:center;
+    }
+    .pdf-nav-btn:disabled { background:rgba(122,26,46,0.18); }
+    .pdf-page-info { font-size:0.7rem; color:var(--muted); }
+
+    .pl-actions {
+      padding:14px 18px 28px; display:flex; gap:10px; flex-shrink:0;
+    }
+    .pl-btn {
+      flex:1; padding:14px 12px; border:none; cursor:pointer;
+      font-family:'Jost',sans-serif; font-size:0.7rem; letter-spacing:0.18em;
+      text-transform:uppercase; border-radius:4px;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      transition:opacity 0.2s;
+    }
+    .pl-btn:active { opacity:0.85; }
+    .pl-btn-wa { background:#25D366; color:var(--white); }
+    .pl-btn-dl { background:var(--wine); color:var(--white); }
+
+    /* Toast */
+    .toast {
+      position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+      background:var(--wine); color:var(--white); padding:11px 26px;
+      border-radius:6px; font-size:0.78rem; z-index:99999;
+      letter-spacing:0.04em; box-shadow:0 4px 16px rgba(0,0,0,0.18);
+      opacity:0; transition:opacity 0.3s; pointer-events:none;
+      white-space:nowrap;
+    }
+    .toast.show { opacity:1; }
+
+    @media(max-width:480px) {
+      header { padding:0 18px 28px; height:200px; }
+      .form-section { padding:36px 18px 70px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay">
+    <div class="loading-spinner" id="spinner"></div>
+    <div class="check-wrap" id="checkWrap">
+      <svg viewBox="0 0 56 56">
+        <circle class="check-circle" id="checkCircle" cx="28" cy="28" r="24"/>
+        <path class="check-path" id="checkPath" d="M16 28 L24 36 L40 20"/>
+      </svg>
+    </div>
+    <p class="loading-text" id="loadingText">Memproses data kamu...</p>
+  </div>
+
+  <!-- PRICELIST PANEL -->
+  <div id="pricelistPanel">
+    <div class="pl-header">
+      <h2>Price List Kisah Abadi</h2>
+      <button class="pl-close-btn" onclick="closePricelist()">✕</button>
+    </div>
+    <div class="pl-countdown" id="plCountdown">
+      <p>File siap dalam <span class="countdown-num" id="cdNum">5</span> detik...</p>
+    </div>
+    <div class="pl-pdf-wrap" id="pdfWrap">
+      <div id="pdfContainer"></div>
+    </div>
+    <div class="pdf-nav" id="pdfNav" style="display:none;">
+      <button class="pdf-nav-btn" id="prevBtn" onclick="changePage(-1)">‹</button>
+      <span class="pdf-page-info" id="pageInfo">Hal 1 / 1</span>
+      <button class="pdf-nav-btn" id="nextBtn" onclick="changePage(1)">›</button>
+    </div>
+    <div class="pl-actions">
+      <button class="pl-btn pl-btn-wa" onclick="kontakWA()">💬 WhatsApp</button>
+      <button class="pl-btn pl-btn-dl" onclick="downloadPDF()">⬇ Download</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <header>
+    <div class="header-content">
+      <!-- Tombol kembali — pakai href biasa, BUKAN JS navigate, supaya gestur iOS normal -->
+      <a href="index.html" class="back-btn">← Kembali</a>
+      <h1>Booking & Pricelist</h1>
+      <p>Kisah Abadi · Wedding Content Creator</p>
+    </div>
+  </header>
+
+  <section class="form-section">
+    <div class="form-intro">
+      <p class="form-intro-title">Isi Detail & Dapatkan Pricelist</p>
+      <p>Lengkapi form di bawah ini untuk mendapatkan pricelist langsung. Data kamu akan kami simpan dan kami segera merespons via WhatsApp.</p>
+    </div>
+
+    <div class="form-group">
+      <label>Nama Lengkap <span>*</span></label>
+      <input type="text" id="nama" placeholder="Masukkan nama kamu..." autocomplete="name" />
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Nomor WhatsApp Aktif <span>*</span></label>
+      <input type="tel" id="noWA" placeholder="Contoh: 08123456789" autocomplete="tel" />
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Tanggal Wedding <span>*</span></label>
+      <input type="date" id="tanggal" />
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Kota <span>*</span></label>
+      <input type="text" id="kota" placeholder="Kota pelaksanaan wedding..." />
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Detail Lokasi</label>
+      <textarea id="detailLokasi" placeholder="Nama venue, alamat lengkap, gedung..."></textarea>
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <span class="radio-label">Dimana kamu menemukan Kisah Abadi? <span style="color:var(--rose)">*</span></span>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" name="sumber" id="src-ig" value="Instagram" />
+          <label for="src-ig">📸 Instagram</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="sumber" id="src-tt" value="TikTok" />
+          <label for="src-tt">🎵 TikTok</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="sumber" id="src-kenal" value="Kenalan" />
+          <label for="src-kenal">🤝 Kenalan</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Pertanyaan / Informasi Tambahan</label>
+      <textarea id="pertanyaan" placeholder="Ada pertanyaan atau hal khusus?"></textarea>
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <div class="agreement">
+        <input type="checkbox" id="setuju" />
+        <p class="agreement-text">Saya menyetujui bahwa data yang saya isi akan digunakan oleh Kisah Abadi untuk keperluan komunikasi dan booking sesuai kebijakan privasi kami.</p>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" onclick="submitForm()">
+        <span>✦</span><span>Get Pricelist</span>
+      </button>
+      <p class="submit-note">Pricelist tampil langsung · Data tersimpan lokal</p>
+    </div>
+  </section>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const PDF_PATH = 'PRICELIST.pdf';
+    let pdfDoc = null, curPage = 1, totalPages = 1;
+    let formData = {};
+
+    /* ─── TOAST ─── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    /* ─── FORM SUBMIT ─── */
+    function submitForm() {
+      const nama = document.getElementById('nama').value.trim();
+      const noWA = document.getElementById('noWA').value.trim();
+      const tanggal = document.getElementById('tanggal').value;
+      const kota = document.getElementById('kota').value.trim();
+      const detailLokasi = document.getElementById('detailLokasi').value.trim();
+      const sumberEl = document.querySelector('input[name="sumber"]:checked');
+      const pertanyaan = document.getElementById('pertanyaan').value.trim();
+      const setuju = document.getElementById('setuju').checked;
+
+      if (!nama) { showToast('Nama wajib diisi'); return; }
+      if (!noWA) { showToast('Nomor WhatsApp wajib diisi'); return; }
+      if (!tanggal) { showToast('Tanggal wedding wajib diisi'); return; }
+      if (!kota) { showToast('Kota wajib diisi'); return; }
+      if (!sumberEl) { showToast('Pilih dari mana kamu menemukan Kisah Abadi'); return; }
+      if (!setuju) { showToast('Centang persetujuan terlebih dahulu'); return; }
+
+      const sumber = sumberEl.value;
+      const tglStr = new Date(tanggal).toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+      // Simpan ke localStorage
+      const entry = {
+        id: Date.now(), nama, noWA, tanggal: tglStr, kota,
+        detailLokasi: detailLokasi || '-', sumber,
+        pertanyaan: pertanyaan || '-', timestamp: new Date().toISOString()
+      };
+      try {
+        const existing = JSON.parse(localStorage.getItem('kisahabadi_bookings') || '[]');
+        existing.push(entry);
+        localStorage.setItem('kisahabadi_bookings', JSON.stringify(existing));
+      } catch(e) {}
+
+      formData = { nama, noWA, pertanyaan };
+
+      // Show loading
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('show');
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('checkWrap').classList.remove('show');
+      document.getElementById('loadingText').textContent = 'Memproses data kamu...';
+
+      setTimeout(() => {
+        document.getElementById('spinner').style.display = 'none';
+        const cw = document.getElementById('checkWrap');
+        cw.classList.add('show');
+        document.getElementById('loadingText').textContent = 'Data tersimpan! ✓';
+        // trigger SVG animation
+        setTimeout(() => {
+          document.getElementById('checkCircle').classList.add('animate');
+          document.getElementById('checkPath').classList.add('animate');
+        }, 50);
+        setTimeout(() => {
+          overlay.classList.remove('show');
+          openPricelist();
+        }, 1400);
+      }, 1600);
+    }
+
+    /* ─── OPEN PRICELIST ─── */
+    function openPricelist() {
+      const panel = document.getElementById('pricelistPanel');
+      panel.classList.add('show');
+      document.body.style.overflow = 'hidden';
+
+      // countdown 5 detik
+      const cdWrap = document.getElementById('plCountdown');
+      const cdNum = document.getElementById('cdNum');
+      cdWrap.style.display = 'block';
+      cdNum.textContent = '5';
+      let cnt = 5;
+      const iv = setInterval(() => {
+        cnt--;
+        cdNum.textContent = cnt;
+        if (cnt <= 0) { clearInterval(iv); cdWrap.style.display = 'none'; }
+      }, 1000);
+
+      // Load PDF
+      loadPDF();
+    }
+
+    async function loadPDF() {
+      try {
+        const loadingTask = pdfjsLib.getDocument(PDF_PATH);
+        pdfDoc = await loadingTask.promise;
+        totalPages = pdfDoc.numPages;
+        curPage = 1;
+        if (totalPages > 1) document.getElementById('pdfNav').style.display = 'flex';
+        await renderAllPages();
+      } catch(e) {
+        console.error('PDF error:', e);
+        document.getElementById('pdfContainer').innerHTML = '<p style="padding:20px;color:#8a7a72;text-align:center;font-size:0.85rem;">PDF tidak dapat dimuat. Silakan klik Download.</p>';
+      }
+    }
+
+    async function renderAllPages() {
+  const container = document.getElementById('pdfContainer');
+  container.innerHTML = '';
+  
+  // Ambil rasio layar (biasanya 2x atau 3x untuk HP modern agar tajam)
+  const dpr = window.devicePixelRatio || 1;
+  const viewportWidth = Math.min(window.innerWidth - 28, 560);
+
+  for (let i = 1; i <= totalPages; i++) {
+    const page = await pdfDoc.getPage(i);
+    
+    // Hitung scale dasar
+    const baseScale = viewportWidth / page.getViewport({ scale: 1 }).width;
+    // Kalikan scale dengan dpr agar hasil render tajam (High DPI)
+    const viewport = page.getViewport({ scale: baseScale * dpr });
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    // Ukuran asli canvas (besar/tajam)
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    // Ukuran tampilan di layar (tetap sesuai layout)
+    canvas.style.width = viewportWidth + 'px';
+    canvas.style.height = (viewport.height / dpr) + 'px';
+    
+    container.appendChild(canvas);
+
+    await page.render({
+      canvasContext: context,
+      viewport: viewport
+    }).promise;
+  }
+  document.getElementById('pageInfo').textContent = `${totalPages} halaman`;
+}
+
+    function changePage(dir) {
+      const newP = curPage + dir;
+      if (newP < 1 || newP > totalPages) return;
+      curPage = newP;
+      document.getElementById('pageInfo').textContent = `Hal ${curPage} / ${totalPages}`;
+      document.getElementById('prevBtn').disabled = curPage <= 1;
+      document.getElementById('nextBtn').disabled = curPage >= totalPages;
+      // Scroll ke canvas yg sesuai
+      const canvases = document.getElementById('pdfContainer').querySelectorAll('canvas');
+      if (canvases[curPage-1]) canvases[curPage-1].scrollIntoView({ behavior:'smooth' });
+    }
+
+    function closePricelist() {
+      document.getElementById('pricelistPanel').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    /* ─── DOWNLOAD PDF ─── */
+    /* Solusi cross-platform: deteksi iOS/Safari lalu buka di tab baru.
+       Android Chrome & Desktop: fetch blob + trigger download.
+       Semua path dimulai dari direct user gesture (onclick) — tidak diblok popup blocker. */
+    function downloadPDF() {
+      showToast('Menyiapkan file...');
+
+      // Deteksi iOS (iPhone/iPad/iPod) atau Safari desktop
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      if (isIOS || isSafari) {
+        // iOS Safari: tidak support <a download> via blob. Buka di tab baru.
+        // User bisa tap tahan > Save to Files / Download
+        window.open(PDF_PATH, '_blank');
+        showToast('Tap & tahan PDF untuk simpan ✓');
+        return;
+      }
+
+      // Android Chrome & Desktop: fetch blob → trigger download
+      fetch(PDF_PATH)
+        .then(function(resp) {
+          if (!resp.ok) throw new Error('Gagal mengambil file');
+          return resp.blob();
+        })
+        .then(function(blob) {
+          var blobUrl = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = 'Pricelist-Kisah-Abadi.pdf';
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 5000);
+          showToast('Download dimulai ✓');
+        })
+        .catch(function() {
+          // Ultimate fallback jika fetch gagal
+          window.open(PDF_PATH, '_blank');
+          showToast('PDF dibuka di tab baru');
+        });
+    }
+
+    /* ─── WHATSAPP ─── */
+    function kontakWA() {
+      const nama = formData.nama || '';
+      const pertanyaan = formData.pertanyaan || '';
+      let teks = `Halo kak, aku ${nama} sudah isi form pricelist`;
+      if (pertanyaan && pertanyaan !== '-') teks += `, ${pertanyaan}`;
+      teks += `, mohon info lebih lanjut 🙏`;
+      window.open(`https://wa.me/628999097703?text=${encodeURIComponent(teks)}`, '_blank');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konsultasi — Kisah Abadi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #fdf6f0; --deep: #1a0a0f; --wine: #7a1a2e;
+      --wine-dark: #5c1220; --rose: #c4748a; --gold: #c8a96e;
+      --muted: #8a7a72; --white: #ffffff; --bg: #fef8f5;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--deep); font-family:'Jost',sans-serif; font-weight:300; min-height:100vh; }
+
+    /* HEADER */
+    header {
+      position:relative; height:220px; overflow:hidden;
+      display:flex; align-items:flex-end; padding:0 24px 32px;
+    }
+    header::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 100%);
+    }
+    header::after {
+      content:''; position:absolute; inset:0;
+      background:url('foto3.jpg') center/cover no-repeat;
+      opacity:0.15; mix-blend-mode:luminosity;
+    }
+    .header-content { position:relative; z-index:2; }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:0.65rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--gold); text-decoration:none; margin-bottom:14px;
+    }
+    header h1 {
+      font-family:'Cormorant Garamond',serif; font-style:italic;
+      font-size:clamp(1.9rem,6vw,2.8rem); color:var(--white); line-height:1; margin-bottom:6px;
+    }
+    header p { font-size:0.65rem; letter-spacing:0.18em; color:rgba(255,255,255,0.42); text-transform:uppercase; }
+
+    /* FORM */
+    .form-section { max-width:600px; margin:0 auto; padding:44px 22px 80px; }
+    .form-intro { margin-bottom:36px; }
+    .form-intro-title { font-family:'Cormorant Garamond',serif; font-size:1.45rem; color:var(--wine); margin-bottom:8px; }
+    .form-intro p { font-size:0.82rem; line-height:1.85; color:var(--muted); }
+
+    .form-group { margin-bottom:28px; position:relative; }
+    .form-group label {
+      display:block; font-size:0.6rem; letter-spacing:0.28em;
+      text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+    }
+    .form-group label span { color:var(--rose); margin-left:2px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; background:transparent; border:none;
+      border-bottom:1px solid rgba(122,26,46,0.22); padding:11px 0;
+      font-family:'Jost',sans-serif; font-size:0.95rem; font-weight:300;
+      color:var(--deep); outline:none; transition:border-color 0.3s;
+      border-radius:0; -webkit-appearance:none; appearance:none;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-bottom-color:var(--wine); }
+    .form-group input::placeholder, .form-group textarea::placeholder { color:rgba(138,122,114,0.42); font-size:0.87rem; }
+    .form-group textarea { resize:none; height:80px; }
+    .form-line {
+      position:absolute; bottom:0; left:0; width:0; height:1px;
+      background:var(--wine); transition:width 0.4s ease;
+    }
+    .form-group input:focus ~ .form-line,
+    .form-group textarea:focus ~ .form-line { width:100%; }
+
+    /* Submit */
+    .submit-area { margin-top:36px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .submit-btn {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      padding:17px 0; background:#25D366; color:var(--white); border:none;
+      font-family:'Jost',sans-serif; font-size:0.73rem; letter-spacing:0.25em;
+      text-transform:uppercase; cursor:pointer; transition:background 0.3s;
+      border-radius:4px; width:100%;
+      box-shadow:0 4px 18px rgba(37,211,102,0.3);
+    }
+    .submit-btn:active { background:#1ebe5d; }
+    .submit-note { font-size:0.63rem; color:var(--muted); letter-spacing:0.08em; text-align:center; }
+
+    /* Toast */
+    .toast {
+      position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+      background:var(--wine); color:var(--white); padding:11px 26px;
+      border-radius:6px; font-size:0.78rem; z-index:99999;
+      letter-spacing:0.04em; box-shadow:0 4px 16px rgba(0,0,0,0.18);
+      opacity:0; transition:opacity 0.3s; pointer-events:none;
+      white-space:nowrap;
+    }
+    .toast.show { opacity:1; }
+
+    @media(max-width:480px) {
+      header { padding:0 18px 28px; height:200px; }
+      .form-section { padding:36px 18px 70px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="back-btn">← Kembali</a>
+      <h1>Konsultasi</h1>
+      <p>Kisah Abadi · Wedding Content Creator</p>
+    </div>
+  </header>
+
+  <section class="form-section">
+    <div class="form-intro">
+      <p class="form-intro-title">Ceritakan Kebutuhanmu</p>
+      <p>Isi form di bawah ini dan kami akan langsung membuka WhatsApp dengan pesan yang sudah siap — tinggal kamu kirim!</p>
+    </div>
+
+    <div class="form-group">
+      <label>Nama Lengkap <span>*</span></label>
+      <input type="text" id="nama" placeholder="Masukkan nama kamu..." autocomplete="name" />
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Topik / Masalah Konsultasi <span>*</span></label>
+      <input type="text" id="masalah" placeholder="Contoh: Pilihan paket, jadwal, dll..." />
+      <div class="form-line"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Detail Masalah / Pesan <span>*</span></label>
+      <textarea id="detail" placeholder="Ceritakan lebih lengkap kebutuhan atau pertanyaanmu..."></textarea>
+      <div class="form-line"></div>
+    </div>
+
+    <div class="submit-area">
+      <button class="submit-btn" onclick="kirimKonsultasi()">
+        <span>💬</span><span>Consul via WhatsApp</span>
+      </button>
+      <p class="submit-note">Pesan sudah disiapkan · Tinggal kamu kirim</p>
+    </div>
+  </section>
+
+  <script>
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function kirimKonsultasi() {
+      const nama   = document.getElementById('nama').value.trim();
+      const masalah = document.getElementById('masalah').value.trim();
+      const detail  = document.getElementById('detail').value.trim();
+
+      if (!nama)    { showToast('Nama wajib diisi'); return; }
+      if (!masalah) { showToast('Topik konsultasi wajib diisi'); return; }
+      if (!detail)  { showToast('Detail masalah wajib diisi'); return; }
+
+      const pesan =
+        `Halo kak Kisah Abadi 🌸\n\n` +
+        `Nama saya: ${nama}\n` +
+        `Topik: ${masalah}\n\n` +
+        `Detail:\n${detail}\n\n` +
+        `Mohon bantuannya ya kak, terima kasih 🙏`;
+
+      window.open(
+        `https://wa.me/628999097703?text=${encodeURIComponent(pesan)}`,
+        '_blank'
+      );
+    }
+  </script>
+</body>
+</html>
