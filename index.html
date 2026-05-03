@@ -17,7 +17,7 @@
       --gold: #c8a96e;
       --muted: #8a7a72;
       --white: #ffffff;
-      --bg: #fef8f5;
+      --bg: #ffffff; /* Mengubah background menjadi putih bersih agar mirip referensi */
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -64,10 +64,10 @@
       transition: background 0.4s ease, padding 0.3s ease;
     }
     .nav.scrolled {
-      background: rgba(254,248,245,0.96);
+      background: rgba(255,255,255,0.96);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(122,26,46,0.08);
-      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.02);
       padding: 14px 20px;
     }
     .nav-logo {
@@ -94,7 +94,7 @@
     /* ── MOBILE MENU ── */
     .mobile-menu {
       position: fixed; inset: 0; z-index: 250;
-      background: rgba(254,248,245,0.98); backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease;
     }
@@ -105,7 +105,7 @@
       font-size: 2.2rem; font-weight: 300; color: var(--deep);
       text-decoration: none; display: block; padding: 18px 40px;
       letter-spacing: 0.05em; transition: color 0.25s;
-      border-bottom: 1px solid rgba(122,26,46,0.09);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
     .mobile-menu-item:last-child a { border-bottom: none; }
     .mobile-menu-item a:hover, .mobile-menu-item a:active { color: var(--wine); }
@@ -181,21 +181,20 @@
     /* ── BELOW HERO ── */
     .below-hero { background: var(--bg); padding-bottom: 40px; }
 
-    /* Gallery Grid yang diperkecil */
+    /* ── GALLERY GRID (Disesuaikan 100% mirip referensi) ── */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      padding: 30px 50px; /* Padding samping diperbesar agar grid lebih kecil di tengah */
-      max-width: 500px; /* Membatasi lebar maksimal grid */
-      margin: 0 auto; /* Tengah secara horizontal */
+      gap: 24px; /* Ini memberikan jarak putih vertikal & horizontal yang pas */
+      padding: 50px 40px; /* Jarak dari sisi kiri/kanan dan atas/bawah */
+      max-width: 420px; /* Ukuran total grid diperkecil */
+      margin: 0 auto; /* Supaya posisinya pas di tengah layar */
     }
     .gallery-item {
       position: relative;
       overflow: hidden;
-      aspect-ratio: 1 / 1; /* Membuat foto menjadi kotak sempurna */
-      border-radius: 4px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      aspect-ratio: 1 / 1; /* Kotak sempurna */
+      /* Hapus border-radius agar sudutnya tajam seperti referensi */
     }
     .gallery-item img {
       width: 100%;
@@ -204,7 +203,7 @@
       display: block;
     }
 
-    /* Capture CTA */
+    /* ── CAPTURE CTA ── */
     .capture-wrap { padding: 0 20px; margin-top: 20px; }
     .capture-section {
       position: relative; overflow: hidden; height: 310px;
@@ -234,7 +233,7 @@
 
     footer {
       background: var(--bg); padding: 20px;
-      text-align: center; border-top: 1px solid rgba(122,26,46,0.07);
+      text-align: center; border-top: 1px solid rgba(0,0,0,0.05);
     }
     .footer-copy { font-size: 0.68rem; color: var(--muted); }
 
@@ -281,7 +280,7 @@
   </section>
 
   <div class="below-hero">
-    <!-- Grid Foto yang Diperkecil tanpa Teks -->
+    <!-- Grid Foto dengan jarak gap yang sudah dibesarkan -->
     <div class="gallery-grid">
       <div class="gallery-item reveal">
         <img src="foto1.png" alt="Wedding Thumbnail 1" loading="lazy" />
