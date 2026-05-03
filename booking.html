@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Booking & Pricelist — Kisah Abadi</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -63,7 +63,7 @@
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-bottom-color:var(--wine); }
     .form-group input::placeholder, .form-group textarea::placeholder { color:rgba(138,122,114,0.42); font-size:0.87rem; }
-    .form-group textarea { resize:none; height:60px; }
+    .form-group textarea { resize:none; height:80px; }
     .form-group select { cursor:pointer; color:var(--deep); }
     .form-group select option { color:var(--deep); background:var(--bg); }
     .form-line {
@@ -280,7 +280,6 @@
 
   <header>
     <div class="header-content">
-      <!-- Tombol kembali — pakai href biasa, BUKAN JS navigate, supaya gestur iOS normal -->
       <a href="index.html" class="back-btn">← Kembali</a>
       <h1>Booking & Pricelist</h1>
       <p>Kisah Abadi · Wedding Content Creator</p>
@@ -311,15 +310,10 @@
       <div class="form-line"></div>
     </div>
 
+    <!-- KOTA sudah dihapus sesuai permintaan: "hapus kota nya, jadi alamat nya ga perlu pake kota, jadi langsung alamat aja" -->
     <div class="form-group">
-      <label>Kota <span>*</span></label>
-      <input type="text" id="kota" placeholder="Kota pelaksanaan wedding..." />
-      <div class="form-line"></div>
-    </div>
-
-    <div class="form-group">
-      <label>Detail Lokasi</label>
-      <textarea id="detailLokasi" placeholder="Nama venue, alamat lengkap, gedung..."></textarea>
+      <label>Alamat Lengkap (venue / lokasi detail) </label>
+      <textarea id="alamat" placeholder="Contoh: Gedung Serbaguna, Jl. Merdeka No. 12, RT 01 RW 02, Kel. Sukamaju, Kec. Kota Baru (tanpa perlu pisah kota)"></textarea>
       <div class="form-line"></div>
     </div>
 
@@ -378,13 +372,12 @@
       setTimeout(() => t.classList.remove('show'), 2600);
     }
 
-    /* ─── FORM SUBMIT ─── */
+    /* ─── FORM SUBMIT (tanpa field kota) ─── */
     function submitForm() {
       const nama = document.getElementById('nama').value.trim();
       const noWA = document.getElementById('noWA').value.trim();
       const tanggal = document.getElementById('tanggal').value;
-      const kota = document.getElementById('kota').value.trim();
-      const detailLokasi = document.getElementById('detailLokasi').value.trim();
+      const alamat = document.getElementById('alamat').value.trim();     // alamat lengkap (tanpa pisah kota)
       const sumberEl = document.querySelector('input[name="sumber"]:checked');
       const pertanyaan = document.getElementById('pertanyaan').value.trim();
       const setuju = document.getElementById('setuju').checked;
@@ -392,18 +385,22 @@
       if (!nama) { showToast('Nama wajib diisi'); return; }
       if (!noWA) { showToast('Nomor WhatsApp wajib diisi'); return; }
       if (!tanggal) { showToast('Tanggal wedding wajib diisi'); return; }
-      if (!kota) { showToast('Kota wajib diisi'); return; }
       if (!sumberEl) { showToast('Pilih dari mana kamu menemukan Kisah Abadi'); return; }
       if (!setuju) { showToast('Centang persetujuan terlebih dahulu'); return; }
 
       const sumber = sumberEl.value;
       const tglStr = new Date(tanggal).toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-      // Simpan ke localStorage
+      // Simpan ke localStorage dengan format ALAMAT (tanpa field kota terpisah)
       const entry = {
-        id: Date.now(), nama, noWA, tanggal: tglStr, kota,
-        detailLokasi: detailLokasi || '-', sumber,
-        pertanyaan: pertanyaan || '-', timestamp: new Date().toISOString()
+        id: Date.now(),
+        nama,
+        noWA,
+        tanggal: tglStr,
+        alamat: alamat || '-',      // alamat lengkap langsung
+        sumber,
+        pertanyaan: pertanyaan || '-',
+        timestamp: new Date().toISOString()
       };
       try {
         const existing = JSON.parse(localStorage.getItem('kisahabadi_bookings') || '[]');
@@ -411,9 +408,10 @@
         localStorage.setItem('kisahabadi_bookings', JSON.stringify(existing));
       } catch(e) {}
 
-      formData = { nama, noWA, pertanyaan };
+      // simpan formData untuk keperluan WA
+      formData = { nama, noWA, pertanyaan, alamat };
 
-      // Show loading
+      // Tampilkan loading
       const overlay = document.getElementById('loadingOverlay');
       overlay.classList.add('show');
       document.getElementById('spinner').style.display = 'block';
@@ -425,7 +423,6 @@
         const cw = document.getElementById('checkWrap');
         cw.classList.add('show');
         document.getElementById('loadingText').textContent = 'Data tersimpan! ✓';
-        // trigger SVG animation
         setTimeout(() => {
           document.getElementById('checkCircle').classList.add('animate');
           document.getElementById('checkPath').classList.add('animate');
@@ -443,7 +440,6 @@
       panel.classList.add('show');
       document.body.style.overflow = 'hidden';
 
-      // countdown 5 detik
       const cdWrap = document.getElementById('plCountdown');
       const cdNum = document.getElementById('cdNum');
       cdWrap.style.display = 'block';
@@ -455,7 +451,6 @@
         if (cnt <= 0) { clearInterval(iv); cdWrap.style.display = 'none'; }
       }, 1000);
 
-      // Load PDF
       loadPDF();
     }
 
@@ -474,41 +469,27 @@
     }
 
     async function renderAllPages() {
-  const container = document.getElementById('pdfContainer');
-  container.innerHTML = '';
-  
-  // Ambil rasio layar (biasanya 2x atau 3x untuk HP modern agar tajam)
-  const dpr = window.devicePixelRatio || 1;
-  const viewportWidth = Math.min(window.innerWidth - 28, 560);
+      const container = document.getElementById('pdfContainer');
+      container.innerHTML = '';
+      const dpr = window.devicePixelRatio || 1;
+      const viewportWidth = Math.min(window.innerWidth - 28, 560);
 
-  for (let i = 1; i <= totalPages; i++) {
-    const page = await pdfDoc.getPage(i);
-    
-    // Hitung scale dasar
-    const baseScale = viewportWidth / page.getViewport({ scale: 1 }).width;
-    // Kalikan scale dengan dpr agar hasil render tajam (High DPI)
-    const viewport = page.getViewport({ scale: baseScale * dpr });
+      for (let i = 1; i <= totalPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const baseScale = viewportWidth / page.getViewport({ scale: 1 }).width;
+        const viewport = page.getViewport({ scale: baseScale * dpr });
 
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-
-    // Ukuran asli canvas (besar/tajam)
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    // Ukuran tampilan di layar (tetap sesuai layout)
-    canvas.style.width = viewportWidth + 'px';
-    canvas.style.height = (viewport.height / dpr) + 'px';
-    
-    container.appendChild(canvas);
-
-    await page.render({
-      canvasContext: context,
-      viewport: viewport
-    }).promise;
-  }
-  document.getElementById('pageInfo').textContent = `${totalPages} halaman`;
-}
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = viewportWidth + 'px';
+        canvas.style.height = (viewport.height / dpr) + 'px';
+        container.appendChild(canvas);
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+      }
+      document.getElementById('pageInfo').textContent = `${totalPages} halaman`;
+    }
 
     function changePage(dir) {
       const newP = curPage + dir;
@@ -517,7 +498,6 @@
       document.getElementById('pageInfo').textContent = `Hal ${curPage} / ${totalPages}`;
       document.getElementById('prevBtn').disabled = curPage <= 1;
       document.getElementById('nextBtn').disabled = curPage >= totalPages;
-      // Scroll ke canvas yg sesuai
       const canvases = document.getElementById('pdfContainer').querySelectorAll('canvas');
       if (canvases[curPage-1]) canvases[curPage-1].scrollIntoView({ behavior:'smooth' });
     }
@@ -528,25 +508,16 @@
     }
 
     /* ─── DOWNLOAD PDF ─── */
-    /* Solusi cross-platform: deteksi iOS/Safari lalu buka di tab baru.
-       Android Chrome & Desktop: fetch blob + trigger download.
-       Semua path dimulai dari direct user gesture (onclick) — tidak diblok popup blocker. */
     function downloadPDF() {
       showToast('Menyiapkan file...');
-
-      // Deteksi iOS (iPhone/iPad/iPod) atau Safari desktop
       var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
       if (isIOS || isSafari) {
-        // iOS Safari: tidak support <a download> via blob. Buka di tab baru.
-        // User bisa tap tahan > Save to Files / Download
         window.open(PDF_PATH, '_blank');
         showToast('Tap & tahan PDF untuk simpan ✓');
         return;
       }
-
-      // Android Chrome & Desktop: fetch blob → trigger download
       fetch(PDF_PATH)
         .then(function(resp) {
           if (!resp.ok) throw new Error('Gagal mengambil file');
@@ -565,7 +536,6 @@
           showToast('Download dimulai ✓');
         })
         .catch(function() {
-          // Ultimate fallback jika fetch gagal
           window.open(PDF_PATH, '_blank');
           showToast('PDF dibuka di tab baru');
         });
