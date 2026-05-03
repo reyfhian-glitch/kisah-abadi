@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Kisah Abadi</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #fdf6f0;
+      --deep: #1a0a0f;
+      --wine: #7a1a2e;
+      --wine-dark: #5c1220;
+      --rose: #c4748a;
+      --gold: #c8a96e;
+      --muted: #8a7a72;
+      --white: #ffffff;
+      --bg: #fef8f5;
+      --border: rgba(122,26,46,0.12);
+      --card: #ffffff;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--deep);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* LOGIN SCREEN */
+    #loginScreen {
+      position: fixed; inset: 0;
+      background: var(--deep);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #loginScreen.hide { opacity:0; visibility:hidden; }
+
+    .login-box {
+      width: 100%; max-width: 380px;
+      padding: 52px 40px;
+      text-align: center;
+      animation: fadeUp 0.7s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .login-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 2.2rem;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .login-sub {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(200,169,110,0.45);
+      margin-bottom: 44px;
+    }
+
+    .login-field {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .login-field label {
+      display: block;
+      font-size: 0.58rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 8px;
+    }
+    .login-field input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(200,169,110,0.2);
+      border-radius: 3px;
+      padding: 13px 16px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .login-field input:focus { border-color: rgba(200,169,110,0.6); }
+    .login-field input::placeholder { color: rgba(255,255,255,0.18); }
+
+    .login-err {
+      font-size: 0.7rem;
+      color: #e07070;
+      text-align: center;
+      margin-bottom: 14px;
+      min-height: 18px;
+      letter-spacing: 0.05em;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--wine);
+      border: none;
+      color: var(--white);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.3s;
+    }
+    .login-btn:hover { background: var(--wine-dark); }
+
+    /* ADMIN LAYOUT */
+    #adminPanel { display: none; }
+    #adminPanel.show { display: block; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 230px; height: 100vh;
+      background: var(--deep);
+      display: flex; flex-direction: column;
+      padding: 36px 0;
+      z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 0 28px 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .sidebar-brand h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.45rem;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+    }
+    .sidebar-brand p {
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(200,169,110,0.35);
+      margin-top: 3px;
+    }
+
+    .sidebar-nav { padding: 28px 0; flex: 1; }
+    .nav-label {
+      font-size: 0.5rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 0 28px;
+      margin-bottom: 10px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 28px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.45);
+      transition: all 0.25s;
+      border-left: 2px solid transparent;
+      position: relative;
+    }
+    .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+    .nav-item.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+      background: rgba(200,169,110,0.07);
+    }
+    .nav-icon { font-size: 1rem; width: 18px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--wine);
+      color: var(--white);
+      font-size: 0.6rem;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 20px;
+    }
+
+    .sidebar-footer {
+      padding: 20px 28px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .logout-btn {
+      width: 100%;
+      padding: 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.4);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.25s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
+
+    /* Main content */
+    .main {
+      margin-left: 230px;
+      min-height: 100vh;
+      padding: 40px 44px 80px;
+    }
+
+    /* Header */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .page-title h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 400;
+      color: var(--deep);
+    }
+    .page-title p {
+      font-size: 0.67rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .header-actions { display: flex; gap: 10px; }
+    .btn-export {
+      padding: 10px 20px;
+      background: var(--wine);
+      color: var(--white);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.25s;
+    }
+    .btn-export:hover { background: var(--wine-dark); }
+    .btn-clear {
+      padding: 10px 20px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.25s;
+    }
+    .btn-clear:hover { border-color: #e07070; color: #e07070; }
+
+    /* Stats */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--gold);
+    }
+    .stat-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--wine);
+      line-height: 1;
+    }
+    .stat-sub {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Tabs (untuk konsistensi, tapi kita pakai sidebar) */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* Table */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .table-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .table-count {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .search-input {
+      padding: 8px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      color: var(--deep);
+      outline: none;
+      width: 220px;
+      transition: border-color 0.25s;
+    }
+    .search-input:focus { border-color: var(--rose); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr {
+      background: #faf4f0;
+    }
+    th {
+      padding: 12px 18px;
+      text-align: left;
+      font-size: 0.57rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 15px 18px;
+      font-size: 0.82rem;
+      color: var(--deep);
+      border-bottom: 1px solid rgba(122,26,46,0.06);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: #fdf8f5; }
+
+    .td-nama { font-weight: 400; }
+    .td-wa a {
+      color: #25D366;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .td-wa a:hover { text-decoration: underline; }
+    .td-tanggal { font-size: 0.78rem; color: var(--wine); }
+    .td-sumber {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(196,116,138,0.1);
+      color: var(--rose);
+    }
+    .td-time { font-size: 0.72rem; color: var(--muted); }
+    .td-note { font-size: 0.78rem; color: var(--muted); max-width: 200px; }
+    .td-note-text {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .btn-wa-row {
+      background: #25D366;
+      border: none;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      margin-right: 6px;
+      transition: background 0.2s;
+    }
+    .btn-wa-row:hover { background: #1da959; }
+    .btn-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(220,80,80,0.4);
+      font-size: 0.85rem;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .btn-delete:hover { color: #e07070; }
+
+    /* Empty state */
+    .empty-state {
+      padding: 70px 20px;
+      text-align: center;
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.3; }
+    .empty-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .empty-sub { font-size: 0.75rem; color: rgba(138,122,114,0.6); letter-spacing: 0.06em; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--deep); color: var(--white);
+      padding: 12px 28px; border-radius: 4px;
+      font-size: 0.78rem; letter-spacing: 0.06em;
+      z-index: 99999; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none; white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .toast.show { opacity: 1; }
+
+    /* Mobile responsive */
+    @media(max-width: 900px) {
+      .sidebar { width: 200px; }
+      .main { margin-left: 200px; padding: 28px 22px 60px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media(max-width: 640px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; padding: 20px 16px 60px; }
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Kisah Abadi</div>
+    <div class="login-sub">Admin Panel · Private Access</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="username" autocomplete="off" />
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="off"
+             onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+    <p class="login-err" id="loginErr"></p>
+    <button class="login-btn" onclick="doLogin()">Masuk</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>Kisah Abadi</h2>
+      <p>Admin Dashboard</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Data</div>
+      <div class="nav-item" onclick="showSection('booking')" id="nav-booking">
+        <span class="nav-icon">📋</span>
+        <span>Data Booking</span>
+        <span class="nav-badge" id="badge-booking">0</span>
+      </div>
+      <div class="nav-item" onclick="showSection('konsultasi')" id="nav-konsultasi">
+        <span class="nav-icon">💬</span>
+        <span>Data Konsultasi</span>
+        <span class="nav-badge" id="badge-konsultasi">0</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">↩ Logout</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- SECTION BOOKING -->
+    <div class="page-section" id="section-booking">
+      <div class="page-header">
+        <div class="page-title">
+          <h1>Data Booking</h1>
+          <p>Semua pengajuan dari halaman booking & pricelist</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-export" onclick="exportCSV('booking')">↓ Export CSV</button>
+          <button class="btn-clear" onclick="clearData('booking')">Hapus Semua</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Booking</div><div class="stat-value" id="stat-booking-total">0</div><div class="stat-sub">semua waktu</div></div>
+        <div class="stat-card"><div class="stat-label">Bulan Ini</div><div class="stat-value" id="stat-booking-month">0</div><div class="stat-sub" id="stat-booking-month-label">—</div></div>
+        <div class="stat-card"><div class="stat-label">Sumber Terbanyak</div><div class="stat-value" id="stat-booking-source" style="font-size:1.3rem;">—</div><div class="stat-sub" id="stat-booking-source-sub">—</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <span class="table-count" id="booking-count">0 data</span>
+          <input class="search-input" type="text" placeholder="Cari nama, alamat, sumber..." oninput="filterBooking(this.value)" />
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="bookingTable">
+            <thead><tr><th>#</th><th>Nama</th><th>No. WhatsApp</th><th>Tgl Wedding</th><th>Alamat</th><th>Sumber</th><th>Catatan</th><th>Masuk</th><th>Aksi</th></tr></thead>
+            <tbody id="bookingBody"></tbody>
+          </table>
+        </div>
+        <div id="bookingEmpty" class="empty-state" style="display:none;"><div class="empty-icon">🌸</div><div class="empty-title">Belum ada data booking</div><div class="empty-sub">Data akan muncul di sini setelah tamu mengisi form booking</div></div>
+      </div>
+    </div>
+
+    <!-- SECTION KONSULTASI -->
+    <div class="page-section" id="section-konsultasi">
+      <div class="page-header">
+        <div class="page-title">
+          <h1>Data Konsultasi</h1>
+          <p>Pertanyaan dari halaman konsultasi</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-export" onclick="exportCSV('konsultasi')">↓ Export CSV</button>
+          <button class="btn-clear" onclick="clearData('konsultasi')">Hapus Semua</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Konsultasi</div><div class="stat-value" id="stat-konsultasi-total">0</div><div class="stat-sub">semua waktu</div></div>
+        <div class="stat-card"><div class="stat-label">Bulan Ini</div><div class="stat-value" id="stat-konsultasi-month">0</div><div class="stat-sub" id="stat-konsultasi-month-label">—</div></div>
+        <div class="stat-card"><div class="stat-label">Topik Terbanyak</div><div class="stat-value" id="stat-konsultasi-topic" style="font-size:1.3rem;">—</div><div class="stat-sub" id="stat-konsultasi-topic-sub">—</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <span class="table-count" id="konsultasi-count">0 data</span>
+          <input class="search-input" type="text" placeholder="Cari nama, topik, detail..." oninput="filterKonsultasi(this.value)" />
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="konsultasiTable">
+            <thead><tr><th>#</th><th>Nama</th><th>Topik</th><th>Detail Pesan</th><th>Masuk</th><th>Aksi</th></tr></thead>
+            <tbody id="konsultasiBody"></tbody>
+          </table>
+        </div>
+        <div id="konsultasiEmpty" class="empty-state" style="display:none;"><div class="empty-icon">💬</div><div class="empty-title">Belum ada pertanyaan konsultasi</div><div class="empty-sub">Data akan muncul setelah pengguna mengirim form konsultasi</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  /* ========== KONFIGURASI ========== */
+  const ADMIN_USER = 'kisahabadi';
+  const ADMIN_PASS = 'abadi2025';
+  const SESSION_KEY = 'ka_admin_session';
+  const BOOKING_KEY = 'kisahabadi_bookings';
+  const KONSULTASI_KEY = 'kisahabadi_consultations';
+
+  let allBookings = [];
+  let allKonsultasi = [];
+  let bookingFiltered = [];
+  let konsultasiFiltered = [];
+
+  /* ========== AUTH ========== */
+  function doLogin() {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    const err = document.getElementById('loginErr');
+    if (u === ADMIN_USER && p === ADMIN_PASS) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      document.getElementById('loginScreen').classList.add('hide');
+      document.getElementById('adminPanel').classList.add('show');
+      loadAllData();
+    } else {
+      err.textContent = 'Username atau password salah';
+      setTimeout(() => err.textContent = '', 2800);
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    location.reload();
+  }
+
+  /* ========== NAVIGASI ========== */
+  function showSection(name) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`section-${name}`).classList.add('active');
+    document.getElementById(`nav-${name}`).classList.add('active');
+  }
+
+  /* ========== LOAD & RENDER ========== */
+  function loadAllData() {
+    loadBookings();
+    loadKonsultasi();
+  }
+
+  function loadBookings() {
+    try {
+      allBookings = JSON.parse(localStorage.getItem(BOOKING_KEY) || '[]');
+      // urutkan dari terbaru
+      allBookings.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    } catch(e) { allBookings = []; }
+    bookingFiltered = [...allBookings];
+    updateBookingStats();
+    renderBookingTable();
+    document.getElementById('badge-booking').textContent = allBookings.length;
+  }
+
+  function loadKonsultasi() {
+    try {
+      allKonsultasi = JSON.parse(localStorage.getItem(KONSULTASI_KEY) || '[]');
+      allKonsultasi.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    } catch(e) { allKonsultasi = []; }
+    konsultasiFiltered = [...allKonsultasi];
+    updateKonsultasiStats();
+    renderKonsultasiTable();
+    document.getElementById('badge-konsultasi').textContent = allKonsultasi.length;
+  }
+
+  /* ----- STATS BOOKING ----- */
+  function updateBookingStats() {
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    const monthCount = allBookings.filter(b => {
+      const d = new Date(b.timestamp);
+      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+    }).length;
+    document.getElementById('stat-booking-total').textContent = allBookings.length;
+    document.getElementById('stat-booking-month').textContent = monthCount;
+    document.getElementById('stat-booking-month-label').textContent = now.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+
+    if (allBookings.length) {
+      const freq = {};
+      allBookings.forEach(b => { if(b.sumber) freq[b.sumber] = (freq[b.sumber] || 0) + 1; });
+      const top = Object.entries(freq).sort((a,b) => b[1]-a[1])[0];
+      if (top) {
+        document.getElementById('stat-booking-source').textContent = top[0];
+        document.getElementById('stat-booking-source-sub').textContent = top[1] + ' orang';
+      } else {
+        document.getElementById('stat-booking-source').textContent = '—';
+        document.getElementById('stat-booking-source-sub').textContent = '';
+      }
+    } else {
+      document.getElementById('stat-booking-source').textContent = '—';
+      document.getElementById('stat-booking-source-sub').textContent = '';
+    }
+  }
+
+  function renderBookingTable() {
+    const tbody = document.getElementById('bookingBody');
+    const emptyDiv = document.getElementById('bookingEmpty');
+    const countSpan = document.getElementById('booking-count');
+    const table = document.getElementById('bookingTable');
+
+    countSpan.textContent = bookingFiltered.length + ' data';
+    if (bookingFiltered.length === 0) {
+      tbody.innerHTML = '';
+      emptyDiv.style.display = 'block';
+      table.style.display = 'none';
+      return;
+    }
+    emptyDiv.style.display = 'none';
+    table.style.display = 'table';
+
+    tbody.innerHTML = bookingFiltered.map((b, idx) => {
+      const tglWedding = b.tanggal ? b.tanggal : (b.tanggalRaw ? new Date(b.tanggalRaw).toLocaleDateString('id-ID') : '—');
+      const alamat = b.alamat ? (b.alamat.length > 45 ? b.alamat.substring(0,42)+'...' : b.alamat) : (b.kota ? b.kota : '—');
+      const masuk = b.timestamp ? new Date(b.timestamp).toLocaleString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+      const catatan = b.pertanyaan && b.pertanyaan !== '-' ? b.pertanyaan : '';
+      const waClean = b.noWA ? b.noWA.replace(/^0/, '62').replace(/\D/g,'') : '';
+      const waLink = `https://wa.me/${waClean}?text=Halo%20${encodeURIComponent(b.nama)}%2C%20saya%20dari%20Kisah%20Abadi.%20Terima%20kasih%20atas%20pengajuan%20booking%20tanggal%20${encodeURIComponent(tglWedding)}.%20Mau%20konfirmasi%20lebih%20lanjut.`;
+
+      return `<tr data-id="${b.id}">
+        <td>${idx+1}</td>
+        <td class="td-nama">${escapeHtml(b.nama)}</td>
+        <td class="td-wa"><a href="${waLink}" target="_blank">📱 ${escapeHtml(b.noWA)}</a></td>
+        <td class="td-tanggal">${escapeHtml(tglWedding)}</td>
+        <td style="font-size:0.78rem;">${escapeHtml(alamat)}</td>
+        <td><span class="td-sumber">${escapeHtml(b.sumber) || '—'}</span></td>
+        <td class="td-note">${catatan ? `<div class="td-note-text">${escapeHtml(catatan)}</div>` : '<span style="color:rgba(138,122,114,0.35)">—</span>'}</td>
+        <td class="td-time">${masuk}</td>
+        <td style="white-space:nowrap;">
+          <button class="btn-wa-row" onclick="chatWA('booking', ${b.id})" title="WhatsApp">💬</button>
+          <button class="btn-delete" onclick="deleteEntry('booking', ${b.id})" title="Hapus">✕</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ----- STATS KONSULTASI ----- */
+  function updateKonsultasiStats() {
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    const monthCount = allKonsultasi.filter(k => {
+      const d = new Date(k.timestamp);
+      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+    }).length;
+    document.getElementById('stat-konsultasi-total').textContent = allKonsultasi.length;
+    document.getElementById('stat-konsultasi-month').textContent = monthCount;
+    document.getElementById('stat-konsultasi-month-label').textContent = now.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+
+    if (allKonsultasi.length) {
+      const freq = {};
+      allKonsultasi.forEach(k => { if(k.topik) freq[k.topik] = (freq[k.topik] || 0) + 1; });
+      const top = Object.entries(freq).sort((a,b) => b[1]-a[1])[0];
+      if (top) {
+        document.getElementById('stat-konsultasi-topic').textContent = top[0];
+        document.getElementById('stat-konsultasi-topic-sub').textContent = top[1] + ' pertanyaan';
+      } else {
+        document.getElementById('stat-konsultasi-topic').textContent = '—';
+      }
+    } else {
+      document.getElementById('stat-konsultasi-topic').textContent = '—';
+    }
+  }
+
+  function renderKonsultasiTable() {
+    const tbody = document.getElementById('konsultasiBody');
+    const emptyDiv = document.getElementById('konsultasiEmpty');
+    const countSpan = document.getElementById('konsultasi-count');
+    const table = document.getElementById('konsultasiTable');
+
+    countSpan.textContent = konsultasiFiltered.length + ' data';
+    if (konsultasiFiltered.length === 0) {
+      tbody.innerHTML = '';
+      emptyDiv.style.display = 'block';
+      table.style.display = 'none';
+      return;
+    }
+    emptyDiv.style.display = 'none';
+    table.style.display = 'table';
+
+    tbody.innerHTML = konsultasiFiltered.map((k, idx) => {
+      const masuk = k.timestamp ? new Date(k.timestamp).toLocaleString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+      const detailShort = k.detail && k.detail.length > 60 ? k.detail.substring(0,57)+'...' : k.detail;
+      const waClean = k.noWA ? k.noWA.replace(/^0/, '62').replace(/\D/g,'') : '';
+      // pesan otomatis untuk konsultasi
+      const waLink = `https://wa.me/${waClean}?text=Halo%20${encodeURIComponent(k.nama)}%2C%20saya%20dari%20Kisah%20Abadi.%20Terima%20kasih%20atas%20konsultasi%20mengenai%20${encodeURIComponent(k.topik)}.%20Siap%20membantu.`;
+
+      return `<tr data-id="${k.id}">
+        <td>${idx+1}</td>
+        <td class="td-nama">${escapeHtml(k.nama)}</td>
+        <td><span class="td-sumber" style="background:rgba(200,169,110,0.1);">${escapeHtml(k.topik)}</span></td>
+        <td class="td-note"><div class="td-note-text" title="${escapeHtml(k.detail)}">${escapeHtml(detailShort)}</div></td>
+        <td class="td-time">${masuk}</td>
+        <td style="white-space:nowrap;">
+          <button class="btn-wa-row" onclick="chatWA('konsultasi', ${k.id})" title="WhatsApp">💬</button>
+          <button class="btn-delete" onclick="deleteEntry('konsultasi', ${k.id})" title="Hapus">✕</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ========== FILTER ========== */
+  function filterBooking(query) {
+    if (!query.trim()) { bookingFiltered = [...allBookings]; }
+    else {
+      const q = query.toLowerCase();
+      bookingFiltered = allBookings.filter(b =>
+        (b.nama && b.nama.toLowerCase().includes(q)) ||
+        (b.alamat && b.alamat.toLowerCase().includes(q)) ||
+        (b.kota && b.kota.toLowerCase().includes(q)) ||
+        (b.sumber && b.sumber.toLowerCase().includes(q)) ||
+        (b.pertanyaan && b.pertanyaan.toLowerCase().includes(q))
+      );
+    }
+    renderBookingTable();
+  }
+
+  function filterKonsultasi(query) {
+    if (!query.trim()) { konsultasiFiltered = [...allKonsultasi]; }
+    else {
+      const q = query.toLowerCase();
+      konsultasiFiltered = allKonsultasi.filter(k =>
+        (k.nama && k.nama.toLowerCase().includes(q)) ||
+        (k.topik && k.topik.toLowerCase().includes(q)) ||
+        (k.detail && k.detail.toLowerCase().includes(q))
+      );
+    }
+    renderKonsultasiTable();
+  }
+
+  /* ========== DELETE ========== */
+  function deleteEntry(type, id) {
+    if (!confirm('Hapus data ini?')) return;
+    if (type === 'booking') {
+      allBookings = allBookings.filter(b => b.id !== id);
+      localStorage.setItem(BOOKING_KEY, JSON.stringify(allBookings));
+      loadBookings();
+      showToast('Booking dihapus');
+    } else if (type === 'konsultasi') {
+      allKonsultasi = allKonsultasi.filter(k => k.id !== id);
+      localStorage.setItem(KONSULTASI_KEY, JSON.stringify(allKonsultasi));
+      loadKonsultasi();
+      showToast('Konsultasi dihapus');
+    }
+  }
+
+  function clearData(type) {
+    if (!confirm(`Hapus SEMUA data ${type === 'booking' ? 'booking' : 'konsultasi'}? Tindakan tidak bisa dibatalkan.`)) return;
+    if (type === 'booking') {
+      localStorage.removeItem(BOOKING_KEY);
+      loadBookings();
+    } else {
+      localStorage.removeItem(KONSULTASI_KEY);
+      loadKonsultasi();
+    }
+    showToast(`Semua data ${type === 'booking' ? 'booking' : 'konsultasi'} dihapus`);
+  }
+
+  /* ========== WHATSAPP CHAT (CUSTOM) ========== */
+  function chatWA(type, id) {
+    if (type === 'booking') {
+      const b = allBookings.find(b => b.id === id);
+      if (!b) return;
+      let waNum = b.noWA.replace(/^0/, '62').replace(/\D/g,'');
+      if (!waNum) return;
+      const tgl = b.tanggal || 'tanggal yang diajukan';
+      const pesan = `Halo ${b.nama}, saya dari Kisah Abadi. Terima kasih sudah mengisi form booking untuk tanggal ${tgl}. Ada yang bisa saya bantu lebih lanjut?`;
+      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(pesan)}`, '_blank');
+    } else if (type === 'konsultasi') {
+      const k = allKonsultasi.find(k => k.id === id);
+      if (!k) return;
+      let waNum = k.noWA ? k.noWA.replace(/^0/, '62').replace(/\D/g,'') : '';
+      if (!waNum) {
+        showToast('Nomor WhatsApp tidak tersedia');
+        return;
+      }
+      const pesan = `Halo ${k.nama}, saya dari Kisah Abadi. Terima kasih atas konsultasi mengenai "${k.topik}". Kami akan segera membantu.`;
+      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(pesan)}`, '_blank');
+    }
+  }
+
+  /* ========== EXPORT CSV ========== */
+  function exportCSV(type) {
+    let data = [], headers = [], filename = '';
+    if (type === 'booking') {
+      if (allBookings.length === 0) { showToast('Tidak ada data booking'); return; }
+      headers = ['No','Nama','No WA','Tanggal Wedding','Alamat','Sumber','Catatan','Waktu Submit'];
+      data = allBookings.map((b,i) => [
+        i+1, b.nama, b.noWA, b.tanggal || '', b.alamat || b.kota || '', b.sumber || '', b.pertanyaan || '', b.timestamp ? new Date(b.timestamp).toLocaleString() : ''
+      ]);
+      filename = `booking_kisahabadi_${new Date().toISOString().slice(0,10)}.csv`;
+    } else {
+      if (allKonsultasi.length === 0) { showToast('Tidak ada data konsultasi'); return; }
+      headers = ['No','Nama','No WA','Topik','Detail Pesan','Waktu Submit'];
+      data = allKonsultasi.map((k,i) => [
+        i+1, k.nama, k.noWA || '', k.topik || '', k.detail || '', k.timestamp ? new Date(k.timestamp).toLocaleString() : ''
+      ]);
+      filename = `konsultasi_kisahabadi_${new Date().toISOString().slice(0,10)}.csv`;
+    }
+    const csvRows = [headers, ...data.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))];
+    const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV berhasil diexport');
+  }
+
+  /* ========== UTILS ========== */
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  /* ========== INIT ========== */
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('loginScreen').classList.add('hide');
+    document.getElementById('adminPanel').classList.add('show');
+    loadAllData();
+    // default active tab
+    showSection('booking');
+  } else {
+    document.getElementById('loginScreen').classList.remove('hide');
+  }
+</script>
+</body>
+</html>
