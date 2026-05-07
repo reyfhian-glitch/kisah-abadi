@@ -4,9 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kisah Abadi — Wedding Content Creator</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+
   <style>
     :root {
       --cream: #fdf6f0;
@@ -17,10 +19,21 @@
       --gold: #c8a96e;
       --muted: #8a7a72;
       --white: #ffffff;
-      --bg: #ffffff; /* Mengubah background menjadi putih bersih agar mirip referensi */
+      --bg: #ffffff;
     }
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background: var(--bg);
       color: var(--deep);
@@ -30,39 +43,100 @@
     }
 
     /* ── LOADER ── */
+
     .loader {
-      position: fixed; inset: 0; background: var(--deep);
-      z-index: 9990; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 20px;
+      position: fixed;
+      inset: 0;
+      background: var(--deep);
+      z-index: 9990;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
       transition: opacity 1s ease, visibility 1s ease;
     }
-    .loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .loader-logo {
-      font-family: 'Cormorant Garamond', serif; font-style: italic;
-      font-size: 2.4rem; color: var(--cream); letter-spacing: 0.08em;
-      opacity: 0; animation: fadeUp 0.9s ease 0.3s forwards;
+
+    .loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
+
+    .loader-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 2.4rem;
+      color: var(--cream);
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.3s forwards;
+    }
+
     .loader-line {
-      width: 0; height: 1px;
+      width: 0;
+      height: 1px;
       background: linear-gradient(to right, transparent, var(--gold), transparent);
       animation: lineGrow 1.2s ease 0.7s forwards;
     }
+
     .loader-sub {
-      font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase;
-      color: var(--muted); opacity: 0; animation: fadeUp 0.8s ease 1s forwards;
+      font-size: 0.58rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
     }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes lineGrow { from { width:0; } to { width:120px; } }
-    @keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes lineGrow {
+      from {
+        width: 0;
+      }
+      to {
+        width: 120px;
+      }
+    }
+
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     /* ── NAV ── */
+
     .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
       padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      opacity: 0; animation: fadeDown 1s ease 2.0s forwards;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 0;
+      animation: fadeDown 1s ease 2s forwards;
       transition: background 0.4s ease, padding 0.3s ease;
     }
+
     .nav.scrolled {
       background: rgba(255,255,255,0.96);
       backdrop-filter: blur(16px);
@@ -70,47 +144,119 @@
       box-shadow: 0 2px 16px rgba(0,0,0,0.02);
       padding: 14px 20px;
     }
+
     .nav-logo {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .nav-logo img { height: 64px; width: auto; object-fit: contain; }
+
+    .nav-logo img {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
 
     .hamburger {
-      display: flex; flex-direction: column; gap: 6px;
-      cursor: pointer; padding: 4px; background: none; border: none; z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+      z-index: 300;
     }
+
     .hamburger span {
-      display: block; width: 28px; height: 2px;
-      background: var(--white); transition: all 0.3s ease; transform-origin: center;
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--white);
+      transition: all 0.3s ease;
+      transform-origin: center;
     }
-    .nav.scrolled .hamburger span { background: var(--deep); }
-    .hamburger.open span { background: var(--deep) !important; }
-    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-    .nav-placeholder { width: 30px; }
+
+    .nav.scrolled .hamburger span {
+      background: var(--deep);
+    }
+
+    .hamburger.open span {
+      background: var(--deep) !important;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg);
+    }
+
+    .nav-placeholder {
+      width: 30px;
+    }
 
     /* ── MOBILE MENU ── */
+
     .mobile-menu {
-      position: fixed; inset: 0; z-index: 250;
-      background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease;
+      position: fixed;
+      inset: 0;
+      z-index: 250;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
     }
-    .mobile-menu.open { opacity: 1; visibility: visible; }
-    .mobile-menu-item { width: 100%; text-align: center; }
+
+    .mobile-menu.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-menu-item {
+      width: 100%;
+      text-align: center;
+    }
+
     .mobile-menu-item a {
-      font-family: 'Cormorant Garamond', serif; font-style: italic;
-      font-size: 2.2rem; font-weight: 300; color: var(--deep);
-      text-decoration: none; display: block; padding: 18px 40px;
-      letter-spacing: 0.05em; transition: color 0.25s;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--deep);
+      text-decoration: none;
+      display: block;
+      padding: 18px 40px;
+      letter-spacing: 0.05em;
+      transition: color 0.25s;
       border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    .mobile-menu-item:last-child a { border-bottom: none; }
-    .mobile-menu-item a:hover, .mobile-menu-item a:active { color: var(--wine); }
+
+    .mobile-menu-item:last-child a {
+      border-bottom: none;
+    }
+
+    .mobile-menu-item a:hover,
+    .mobile-menu-item a:active {
+      color: var(--wine);
+    }
 
     /* ── HERO ── */
+
     .hero {
       position: relative;
       width: 100%;
@@ -119,12 +265,24 @@
       min-height: 400px;
       overflow: hidden;
     }
-    .hero-video-bg { position: absolute; inset: 0; z-index: 0; }
-    .hero-video-bg video {
-      width: 100%; height: 100%; object-fit: cover; display: block;
+
+    .hero-video-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
     }
+
+    .hero-video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .hero-overlay {
-      position: absolute; inset: 0; z-index: 1;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
       background: linear-gradient(
         to bottom,
         rgba(26,10,15,0.42) 0%,
@@ -133,30 +291,55 @@
         rgba(26,10,15,0.65) 100%
       );
     }
+
     .hero-content {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-      bottom: 15%;
-      display: flex; flex-direction: column;
-      align-items: center; text-align: center;
-      padding: 0 22px 32px;
-      opacity: 0; animation: fadeUp 1.2s ease 2.0s forwards;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 13%;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 24px 28px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 2s forwards;
     }
+
     .hero-eyebrow {
-      font-size: 0.54rem; letter-spacing: 0.48em; text-transform: uppercase;
-      color: rgba(255,255,255,0.62); margin-bottom: 8px;
+      font-size: 0.54rem;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.62);
+      margin-bottom: 7px;
     }
+
     .hero-title {
-      font-family: 'Cormorant Garamond', serif; font-weight: 300;
-      color: var(--white); font-size: clamp(2.1rem, 8.5vw, 3.4rem);
-      line-height: 1.1; letter-spacing: 0.01em; margin-bottom: 12px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      color: var(--white);
+      font-size: clamp(2.1rem, 8.5vw, 3.4rem);
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
       text-shadow: 0 2px 28px rgba(0,0,0,0.5);
     }
-    .hero-title em { font-style: italic; }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 700;
+    }
+
     .hero-tagline {
-      font-size: clamp(0.7rem, 2vw, 0.83rem); line-height: 1.78;
-      color: rgba(255,255,255,0.87); max-width: 480px; margin: 0 auto 20px;
+      font-size: clamp(0.68rem, 2vw, 0.8rem);
+      line-height: 1.55;
+      color: rgba(255,255,255,0.88);
+      max-width: 420px;
+      margin: 0 auto 18px;
       text-shadow: 0 1px 14px rgba(0,0,0,0.65);
     }
+
     .hero-cta {
       display: inline-block;
       background: #ffffff;
@@ -172,6 +355,7 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       border: 1px solid rgba(0, 0, 0, 0.05);
     }
+
     .hero-cta:hover {
       background: #f5f5f5;
       color: #b71c1c;
@@ -179,23 +363,29 @@
     }
 
     /* ── BELOW HERO ── */
-    .below-hero { background: var(--bg); padding-bottom: 40px; }
 
-    /* ── GALLERY GRID (Disesuaikan 100% mirip referensi) ── */
+    .below-hero {
+      background: var(--bg);
+      padding-bottom: 40px;
+    }
+
+    /* ── GALLERY ── */
+
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 24px; /* Ini memberikan jarak putih vertikal & horizontal yang pas */
-      padding: 50px 40px; /* Jarak dari sisi kiri/kanan dan atas/bawah */
-      max-width: 420px; /* Ukuran total grid diperkecil */
-      margin: 0 auto; /* Supaya posisinya pas di tengah layar */
+      gap: 14px;
+      padding: 42px 48px;
+      max-width: 360px;
+      margin: 0 auto;
     }
+
     .gallery-item {
       position: relative;
       overflow: hidden;
-      aspect-ratio: 1 / 1; /* Kotak sempurna */
-      /* Hapus border-radius agar sudutnya tajam seperti referensi */
+      aspect-ratio: 1 / 1;
     }
+
     .gallery-item img {
       width: 100%;
       height: 100%;
@@ -204,43 +394,100 @@
     }
 
     /* ── CAPTURE CTA ── */
-    .capture-wrap { padding: 0 20px; margin-top: 20px; }
-    .capture-section {
-      position: relative; overflow: hidden; height: 310px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
+
+    .capture-wrap {
+      padding: 0 20px;
+      margin-top: 14px;
     }
+
+    .capture-section {
+      position: relative;
+      overflow: hidden;
+      height: 310px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .capture-section img {
-      position: absolute; inset: 0; width: 100%; height: 100%;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
-    .capture-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); }
+
+    .capture-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+    }
+
     .capture-content {
-      position: relative; z-index: 2; text-align: center; padding: 0 24px;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 24px;
     }
+
     .capture-content h2 {
-      font-family: 'Cormorant Garamond', serif; font-style: italic;
-      font-size: 1.85rem; color: var(--white); font-weight: 300; margin-bottom: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.85rem;
+      color: var(--white);
+      font-weight: 700;
+      margin-bottom: 8px;
     }
-    .capture-content p { font-size: 0.78rem; color: rgba(255,255,255,0.85); margin-bottom: 20px; }
+
+    .capture-content p {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 20px;
+    }
+
     .capture-btn {
-      display: inline-block; border: 1.5px solid rgba(255,255,255,0.85);
-      color: var(--white); font-size: 0.7rem; letter-spacing: 0.18em;
-      text-transform: uppercase; padding: 11px 30px; text-decoration: none;
-      border-radius: 3px; transition: background 0.3s;
+      display: inline-block;
+      border: 1.5px solid rgba(255,255,255,0.85);
+      color: var(--white);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 11px 30px;
+      text-decoration: none;
+      border-radius: 3px;
+      transition: background 0.3s;
     }
-    .capture-btn:active { background: rgba(255,255,255,0.15); }
+
+    .capture-btn:active {
+      background: rgba(255,255,255,0.15);
+    }
 
     footer {
-      background: var(--bg); padding: 20px;
-      text-align: center; border-top: 1px solid rgba(0,0,0,0.05);
+      background: var(--bg);
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid rgba(0,0,0,0.05);
     }
-    .footer-copy { font-size: 0.68rem; color: var(--muted); }
 
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .footer-copy {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
+
 <body>
 
   <div class="loader" id="loader">
@@ -251,86 +498,149 @@
 
   <nav class="nav" id="mainNav">
     <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
+
     <div class="nav-logo">
       <img src="logo.png" alt="Kisah Abadi" />
     </div>
+
     <div class="nav-placeholder"></div>
   </nav>
 
   <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-item"><a href="konsultasi.html">Konsultasi</a></div>
-    <div class="mobile-menu-item"><a href="booking.html">Get In Touch</a></div>
+    <div class="mobile-menu-item">
+      <a href="konsultasi.html">Konsultasi</a>
+    </div>
+
+    <div class="mobile-menu-item">
+      <a href="booking.html">Get In Touch</a>
+    </div>
   </div>
 
   <section class="hero">
+
     <div class="hero-video-bg">
       <video autoplay loop muted playsinline webkit-playsinline>
         <source src="video.mp4" type="video/mp4" />
       </video>
     </div>
+
     <div class="hero-overlay"></div>
+
     <div class="hero-content">
       <p class="hero-eyebrow">WEDDING CONTENT CREATOR · MEDAN</p>
-      <h1 class="hero-title">capturing <em> your moment</em></h1>
-      <p class="hero-tagline">Every part of your wedding day is special. We believe even the smallest moments—like a secret smile or a warm hug—are important to remember.</p>
-      <a href="booking.html" class="hero-cta">GET IN TOUCH</a>
+
+      <h1 class="hero-title">
+        capturing <em>your moment</em>
+      </h1>
+
+      <p class="hero-tagline">
+        Justlike a close friend, Kisah Abadi ensures every beautiful moment is captured naturally, warmly, and without losing its true emotion
+      </p>
+
+      <a href="booking.html" class="hero-cta">
+        GET IN TOUCH
+      </a>
     </div>
+
   </section>
 
   <div class="below-hero">
-    <!-- Grid Foto dengan jarak gap yang sudah dibesarkan -->
+
     <div class="gallery-grid">
+
       <div class="gallery-item reveal">
         <img src="foto1.png" alt="Wedding Thumbnail 1" loading="lazy" />
       </div>
+
       <div class="gallery-item reveal">
         <img src="foto2.jpg" alt="Wedding Thumbnail 2" loading="lazy" />
       </div>
+
       <div class="gallery-item reveal">
         <img src="foto3.jpg" alt="Wedding Thumbnail 3" loading="lazy" />
       </div>
+
       <div class="gallery-item reveal">
         <img src="foto2.jpg" alt="Wedding Thumbnail 4" loading="lazy" />
       </div>
+
     </div>
 
     <div class="capture-wrap reveal">
+
       <div class="capture-section">
+
         <img src="foto1.png" alt="Capture Story" loading="lazy" />
+
         <div class="capture-overlay"></div>
+
         <div class="capture-content">
           <h2>Let's Capture Your Story</h2>
+
           <p>We'll help you create beautiful memories.</p>
-          <a href="konsultasi.html" class="capture-btn">Let's Go</a>
+
+          <a href="konsultasi.html" class="capture-btn">
+            Let's Go
+          </a>
         </div>
+
       </div>
+
     </div>
+
   </div>
 
   <footer>
-    <p class="footer-copy">© 2026 Kisah Abadi - Wedding Content Creator</p>
+    <p class="footer-copy">
+      © 2026 Kisah Abadi - Wedding Content Creator
+    </p>
   </footer>
 
   <script>
+
     window.addEventListener('load', () => {
-      setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1000);
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 1000);
     });
+
     window.addEventListener('scroll', () => {
-      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
+      document
+        .getElementById('mainNav')
+        .classList.toggle('scrolled', window.scrollY > 40);
     });
+
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
+
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('open');
       mobileMenu.classList.toggle('open');
-      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+
+      document.body.style.overflow =
+        mobileMenu.classList.contains('open')
+          ? 'hidden'
+          : '';
     });
+
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-    }, { threshold: 0.1 });
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
   </script>
+
 </body>
 </html>
